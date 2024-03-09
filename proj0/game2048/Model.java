@@ -109,11 +109,62 @@ public class Model extends Observable {
     public boolean tilt(Side side) {
         boolean changed;
         changed = false;
-
+        Board b=this.board;
+        int square_size=b.size();
+        switch (side){
+            case EAST :{
+                b.setViewingPerspective(Side.EAST);
+                changed=this.tilt(Side.NORTH);
+                b.setViewingPerspective(Side.NORTH);
+                break;
+            }
+            case WEST:{
+                b.setViewingPerspective(Side.WEST);
+                changed=this.tilt(Side.NORTH);
+                b.setViewingPerspective(Side.NORTH);
+                break;
+            }
+            case NORTH:{
+                for(int i=0;i<square_size;i++){
+                    Tile t=b.tile(i,square_size-1);
+                    int cur=square_size-1;
+                    for(int j=square_size-2;j>=0;j--){
+                        Tile cur_tile=b.tile(i,j);
+                        t=b.tile(i,cur);
+                        if(cur_tile==null)continue;
+                        if(t==null) {
+                            b.move(i, cur, cur_tile);
+                            changed=true;
+                        }
+                        else if(t.value()==cur_tile.value()){
+                            int pre=this.score;
+                            this.score=pre+2*cur_tile.value();
+                            b.move(i,cur,cur_tile);
+                            changed=true;
+                            cur--;
+                        }
+                        else if(cur-1!=j){
+                            cur--;
+                            b.move(i,cur,cur_tile);
+                            changed=true;
+                        }
+                        else{
+                            cur--;
+                        }
+                    }
+                }
+                break;
+            }
+            case SOUTH:{
+                b.setViewingPerspective(Side.SOUTH);
+                changed=this.tilt(Side.NORTH);
+                b.setViewingPerspective(Side.NORTH);
+                break;
+            }
+        }
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
-
         checkGameOver();
         if (changed) {
             setChanged();
@@ -138,6 +189,12 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        int square_length=b.size();
+        for(int i=0;i<square_length;i++){
+            for(int j=0;j<square_length;j++){
+                if(b.tile(i,j)==null)return true;
+            }
+        }
         return false;
     }
 
@@ -148,6 +205,16 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        int square_size=b.size();
+        for(int i=0;i<square_size;i++){
+            for(int j=0;j<square_size;j++){
+                Tile now=b.tile(i,j);
+                if(now!=null){
+                    int cur=now.value();
+                    if(cur==MAX_PIECE)return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +226,34 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        int square_size=b.size();
+        for(int i=0;i<square_size;i++){
+            for(int j=0;j<square_size;j++){
+                Tile now=b.tile(i,j);
+                if(now==null)return true;//该砖块为空则证明至少可以Move
+                int size=4;//下面则是得出相邻砖块
+                if(i==0||i==square_size-1)size-=1;
+                if(j==0||j==square_size-1)size-=1;
+                Tile[]neighbor=new Tile[size];
+                int[]dx=new int[4];int[]dy=new int[4];
+                dx[0]=1;dx[1]=-1;dx[2]=0;dx[3]=0;
+                dy[0]=0;dy[1]=0;dy[2]=1;dy[3]=-1;
+                int nei_index=0;
+                for(int index=0;index<4;index++) {
+                    int curx = j + dx[index];
+                    int cury = i + dy[index];
+                    if (cury >= square_size || cury < 0 || curx >= square_size || curx < 0) continue;
+                    neighbor[nei_index] = b.tile(curx, cury);
+                    nei_index++;
+                }
+                int now_value= now.value();//然后遍历相邻砖块，对每个砖块进行检测，如果值相同，true,如果为空，true
+
+                for(int temp=0;temp<size;temp++){
+                    if(neighbor[temp]==null)return true;
+                    if(neighbor[temp].value()==now_value)return true;
+                }
+            }
+        }
         return false;
     }
 
