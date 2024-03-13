@@ -52,9 +52,9 @@ public class TimeAList {
         times.addLast(sec3);
 
         AList <Integer>test4=new AList();
-        Ns.addLast(128000);
+        Ns.addLast(12800000);
         Stopwatch sw4=new Stopwatch();
-        for(int i=0;i<128000;i++){
+        for(int i=0;i<12800000;i++){
             test4.addLast(1);
         }
         double sec4=sw4.elapsedTime();
