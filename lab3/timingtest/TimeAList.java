@@ -28,7 +28,7 @@ public class TimeAList {
         AList <Integer>test1=new AList();
         Stopwatch sw1=new Stopwatch();
         for(int i=0;i<1000;i++){
-            test1.addLast(1);
+            test1.addLast(i);
         }
         double sec1=sw1.elapsedTime();
         times.addLast(sec1);
@@ -37,7 +37,7 @@ public class TimeAList {
         Ns.addLast(10000);
         Stopwatch sw2=new Stopwatch();
         for(int i=0;i<10000;i++){
-            test2.addLast(1);
+            test2.addLast(i);
         }
         double sec2=sw2.elapsedTime();
         times.addLast(sec2);
@@ -46,16 +46,16 @@ public class TimeAList {
         Ns.addLast(64000);
         Stopwatch sw3=new Stopwatch();
         for(int i=0;i<64000;i++){
-            test3.addLast(1);
+            test3.addLast(i);
         }
         double sec3=sw3.elapsedTime();
         times.addLast(sec3);
 
         AList <Integer>test4=new AList();
-        Ns.addLast(12800000);
+        Ns.addLast(128000);
         Stopwatch sw4=new Stopwatch();
-        for(int i=0;i<12800000;i++){
-            test4.addLast(1);
+        for(int i=0;i<128000;i++){
+            test4.addLast(i);
         }
         double sec4=sw4.elapsedTime();
         times.addLast(sec4);
