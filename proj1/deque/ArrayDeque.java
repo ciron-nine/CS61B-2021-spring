@@ -25,7 +25,7 @@ public class ArrayDeque<T> {
         size++;
     }
 
-    public void resize(int capacity){
+    private void resize(int capacity){
         T[] a = (T[]) new Object[capacity];
         int first = next_first+1;
         if(first >= items.length) first = 0;
@@ -72,7 +72,7 @@ public class ArrayDeque<T> {
             resize(items.length/4);
         }
         next_first++;
-        if(next_last == next_first){
+        if(size == 0){
             next_first--;
             return null;
         }
@@ -88,7 +88,7 @@ public class ArrayDeque<T> {
             resize(items.length/4);
         }
         next_last--;
-        if(next_last == next_first){
+        if(size == 0){
             next_last++;
             return null;
         }

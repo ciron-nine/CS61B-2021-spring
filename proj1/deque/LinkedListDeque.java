@@ -78,7 +78,7 @@ public class LinkedListDeque<T> {
         }
         return null;
     }
-    public T gethelper(Node cur,int index){
+    private T gethelper(Node cur,int index){
         if(cur == sention)return null;
         if(index == 0)return cur.item;
         else {
