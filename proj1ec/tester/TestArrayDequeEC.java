@@ -25,8 +25,8 @@ public class TestArrayDequeEC {
                 else if (sel == 1) {
                     int random = StdRandom.uniform(randomSize);
                     test += "addLast("+random+")\n";
-                    AD1.addLast(StdRandom.uniform(random));
-                    correct.addLast(StdRandom.uniform(random));
+                    AD1.addLast(random);
+                    correct.addLast(random);
                 }
                 else if (sel == 2) {
                     Integer number1 = AD1.removeFirst();
@@ -54,8 +54,8 @@ public class TestArrayDequeEC {
                     int random = StdRandom.uniform(randomSize);
                     test += "addLast("+random+")\n";
 
-                    AD1.addLast(StdRandom.uniform(random));
-                    correct.addLast(StdRandom.uniform(random));
+                    AD1.addLast(random);
+                    correct.addLast(random);
                 }
             }
         }
