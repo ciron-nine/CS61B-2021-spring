@@ -182,12 +182,15 @@ public class ArrayDequeTest {
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
 
         ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 100; i++) {
             lld1.addLast(i);
         }
 
+        int index = 0;
+
         for (Integer i : lld1) {
-            assertEquals("Should have the same value", i, (double) lld1.removeFirst(), 0.0);
+            assertEquals("Should have the same value", i, index, 0.0);
+            index++;
         }
     }
 
