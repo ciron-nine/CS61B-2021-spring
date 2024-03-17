@@ -24,7 +24,7 @@ public class TTFAF {
 //        }
 
         // You can also do this:
-         GuitarPlayer player = new GuitarPlayer(new java.io.File("/home/ghost/Downloads/music.mid"));
+         GuitarPlayer player = new GuitarPlayer(new java.io.File("/home/ghost/Downloads/Bad apple(木吉版).mid"));
          player.play();
     }
 
