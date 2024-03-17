@@ -176,4 +176,36 @@ public class ArrayDequeTest {
             assertEquals("Should have the same value", i, (double) lld1.removeFirst(), 0.0);
         }
     }
+
+    @Test
+    public void IreatalTest() {
+        System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
+
+        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        for (int i = 0; i < 8; i++) {
+            lld1.addLast(i);
+        }
+
+        for (Integer i : lld1) {
+            assertEquals("Should have the same value", i, (double) lld1.removeFirst(), 0.0);
+        }
+    }
+
+    @Test
+    public void EqualTest() {
+        System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
+
+        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        ArrayDeque<Integer> lld2 = new ArrayDeque<Integer>();
+        for (int i = 0; i < 8; i++) {
+            lld1.addLast(i);
+            lld2.addLast(i);
+        }
+        ArrayDeque<Double> lld3 = new ArrayDeque<>();
+        for (double i = 0; i < 8; i++) {
+            lld3.addLast(i);
+        }
+        assertTrue("should be true", lld1.equals(lld2));
+        assertFalse("should be false", lld1.equals(lld3));
+    }
 }

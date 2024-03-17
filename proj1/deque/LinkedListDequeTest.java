@@ -134,6 +134,43 @@ public class LinkedListDequeTest {
             assertEquals("Should have the same value", i, (double) lld1.removeLast(), 0.0);
         }
 
+    }
+
+    @Test
+    public void IreatalTest() {
+        System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
+
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        for (int i = 0; i < 8; i++) {
+            lld1.addLast(i);
+        }
+
+        for (Integer i : lld1) {
+            assertEquals("Should have the same value", i, (double) lld1.removeFirst(), 0.0);
+        }
+    }
+
+    @Test
+    public void EqualTest() {
+        System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
+
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<Integer>();
+        LinkedListDeque<Integer> lld4 = new LinkedListDeque<>();
+        for (int i = 0; i < 8; i++) {
+            lld1.addLast(i);
+            lld2.addLast(i);
+        }
+        for (int i = 7; i >= 0; i--){
+            lld4.addFirst(i);
+        }
+        LinkedListDeque<Double> lld3 = new LinkedListDeque<>();
+        for (double i = 0; i < 8; i++) {
+            lld3.addLast(i);
+        }
+        assertTrue("should be true", lld1.equals(lld2));
+        assertFalse("should be false", lld1.equals(lld3));
+        assertTrue("should be false", lld1.equals(lld4));
 
     }
 }

@@ -1,8 +1,12 @@
 package deque;
 
-public class LinkedListDeque<T> {
-    private Node sention;
+import java.util.Iterator;
+
+public class LinkedListDeque<T> implements Iterable<T>,Deque<T> {
+    private final Node sention;
     private int size;
+
+
     private class Node{
 
         public T item;
@@ -23,6 +27,7 @@ public class LinkedListDeque<T> {
         sention.next = sention;
     }
 
+    @Override
     public void addFirst(T item){
         Node temp = new Node(item);
         Node head = sention.next;
@@ -33,6 +38,7 @@ public class LinkedListDeque<T> {
         size++;
     }
 
+    @Override
     public void addLast(T item){
         Node temp = new Node(item);
         Node tail = sention.prev;
@@ -43,9 +49,12 @@ public class LinkedListDeque<T> {
         size++;
     }
 
+    @Override
     public int size(){
         return size;
     }
+
+    @Override
     public T removeFirst(){
         if(sention.next==sention){
             return null;
@@ -57,6 +66,8 @@ public class LinkedListDeque<T> {
         size--;
         return delete_head.item;
     }
+
+    @Override
     public T removeLast(){
         if(sention.next==sention){
             return null;
@@ -69,6 +80,8 @@ public class LinkedListDeque<T> {
         return delete_tail.item;
     }
 
+
+    @Override
     public T get(int index){
         Node cur=sention.next;
         while (cur != sention){
@@ -77,6 +90,28 @@ public class LinkedListDeque<T> {
             cur = cur.next;
         }
         return null;
+    }
+
+    public Iterator<T> iterator() {
+        return new LinkedDequeIterator(sention);
+    }
+    private class LinkedDequeIterator implements Iterator<T> {
+        private final Node senti;
+        private Node curr;
+        public LinkedDequeIterator(Node next_index){
+            senti = next_index;
+            curr = senti.next;
+        }
+
+        public boolean hasNext() {
+            return curr != senti;
+        }
+
+        public T next() {
+            T items = curr.item;
+            curr = curr.next;
+            return items;
+        }
     }
     private T gethelper(Node cur,int index){
         if(cur == sention)return null;
@@ -89,10 +124,8 @@ public class LinkedListDeque<T> {
         return gethelper(sention.next,index);
     }
 
-    public boolean isEmpty(){
-        return size == 0 ? true : false;
-    }
 
+    @Override
     public void printDeque(){
         Node cur = sention.next;
         while(cur != sention){
@@ -105,7 +138,8 @@ public class LinkedListDeque<T> {
 
     public boolean equals(Object o){
         if(o instanceof LinkedListDeque){
-            LinkedListDeque o1 = (LinkedListDeque) o;
+            LinkedListDeque o1;
+            o1 = (LinkedListDeque) o;
             int size1 = o1.size();
             int size2 = this.size();
             if(size1 != size2)return false;
