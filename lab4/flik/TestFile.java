@@ -1,4 +1,10 @@
 package flik;
 
-public class Test {
+import org.junit.Test;
+
+public class TestFile {
+    @Test
+    public void test () {
+        
+    }
 }
