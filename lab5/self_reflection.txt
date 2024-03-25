@@ -4,27 +4,27 @@ ArrayDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: No ,by myself, i dont have a staff for help. 
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A:i run everything by myself, not get any help from others, unless some web tips.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A:some repeat code and ugly name polite
 
 Q: What did you learn by talking to your partner about writing ArrayDeque?
 
-A:
+A:dont have partner
 
 Q: What do you wish you would have known before writing ArrayDeque, if anything?
 
-A:
+A: resize should make a big size, i use 1.01, but failed,until i use debug to figure out.
 
 Q: If you wrote ArrayDeque again, what would you do differently, if anything?
 
-A:
+A:resize private function
 
 -----
 
@@ -32,27 +32,27 @@ LinkedListDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: no
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A:it doesnt have any problem
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A:pre and next pointer,recursive i user a private function that i created.
 
 Q: What did you learn by talking to your partner about writing LinkedListDeque?
 
-A:
+A: he dosent exist.
 
 Q: What do you wish you would have known before writing LinkedListDeque, if anything?
 
-A:
+A:sention matters
 
 Q: If you wrote LinkedListDeque again, what would you do differently, if anything?
 
-A:
+A:i use tow sention to rewirte again?
 
 -----
 
@@ -60,4 +60,4 @@ Meta:
 
 Q: Did you like this design review process? Anything we should do differently next time?
 
-A: 
+A: i like you should ask something i think should be more interesting and useful no just dull.
