@@ -1,6 +1,6 @@
 # Gitlet Design Document
 
-**Name**:
+**Name**: cirno-nine
 
 ## Classes and Data Structures
 
