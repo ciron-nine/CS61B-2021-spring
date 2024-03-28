@@ -77,6 +77,10 @@ public class Repository {
             System.out.println("File does not exist.");
             return;
         }
+        File remove_file = new File(REMOVAL_DIR + "/" + file_name);
+        if(remove_file.exists()) {
+            return;
+        }
         File added_file = new File(CWD + "/" + file_name);
         Commit head = readObject(Head_commit_pointer,Commit.class);
         if(head.map.get(file_name) == null ) {
@@ -101,11 +105,14 @@ public class Repository {
     }
 
     public static void makecommit(String message) {
+        if(message.compareTo("") == 0) {
+            System.out.println("Please enter a commit message.");
+        }
         Date date = new Date();
         List<String> dir_file = plainFilenamesIn(STAGED_DIR);
         List<String> removal_file = plainFilenamesIn(REMOVAL_DIR);
         if(dir_file.isEmpty() && removal_file.isEmpty()) {
-            System.out.println("If no files have been staged, abort. Print the message No changes added to the commit.");
+            System.out.println("No changes added to the commit.");
             System.exit(0);
         }
         String commit_name = sha1(message + date);
