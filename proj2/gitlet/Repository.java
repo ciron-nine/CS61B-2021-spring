@@ -287,7 +287,55 @@ public class Repository {
     }
 
     public static void make_branchcheckout(String branch) {
+        File branch_file = new File(BRANCH_DIR + "/" + branch);
+        if(!branch_file.exists()) {
+            System.out.println("No such branch exists.");
+        }
+        else {
+            String branch_now = readContentsAsString(current_branch);
+            if(branch.compareTo(branch_now) == 0) {
+                System.out.println("No need to checkout the current branch.");
+            }
+            else {
+                Commit now_commit = readObject(Head_commit_pointer, Commit.class);
+                List<String> file_name = plainFilenamesIn(CWD);
+                for(int i = 0; i < file_name.size(); i ++) {
+                    String now_file_name = file_name.get(i);
+                    if(now_commit.map.get(now_file_name) == null){
+                        System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                        return;
+                    }
+                }
+                for(int i = 0; i < file_name.size(); i ++) {
+                    String now_file_name = file_name.get(i);
+                    File cwd_file = new File(CWD + "/" +now_file_name);
+                    restrictedDelete(cwd_file);
+                }
+                file_name = plainFilenamesIn(STAGED_DIR);
+                for(int i = 0; i < file_name.size(); i ++) {
+                    String now_file_name = file_name.get(i);
+                    File stage_file = new File(STAGED_DIR + "/" +now_file_name);
+                    stage_file.delete();
+                }
 
+                file_name = plainFilenamesIn(REMOVAL_DIR);
+                for(int i = 0; i < file_name.size(); i ++) {
+                    String now_file_name = file_name.get(i);
+                    File removal_file = new File(REMOVAL_DIR + "/" +now_file_name);
+                    removal_file.delete();
+                }
+
+                Commit branch_commit = readObject(branch_file, Commit.class);
+                for (Map.Entry<String, Blop> entry : now_commit.map.entrySet()) {
+                    Blop now = entry.getValue();
+                    String create_file_name = now.name;
+                    File create_file = new File(CWD + "/" + create_file_name);
+                    writeContents(create_file,now.data);
+                }
+                writeObject(Head_commit_pointer,branch_commit);
+                writeObject(current_branch,branch_commit);
+            }
+        }
     }
 
     public static void make_commitcheckout(String commit, String file_name) {
@@ -306,6 +354,53 @@ public class Repository {
                 writeContents(file,blop.data);
             }
         }
+    }
+
+    public static void makebranch(String branch_name) {
+        File branch_file = new File(BRANCH_DIR + "/" + branch_name);
+        if(branch_file.exists()) {
+            System.out.println("A branch with that name already exists.");
+        }
+        else {
+            Commit cur_commit = readObject(Head_commit_pointer, Commit.class);
+            writeObject(branch_file, cur_commit);
+        }
+    }
+
+    public static void makermbranch(String branch_name) {
+        File branch_file = new File(BRANCH_DIR + "/" + branch_name);
+        if(!branch_file.exists()) {
+            System.out.println("A branch with that name does not exist.");
+        }
+        else {
+            String branch = readContentsAsString(current_branch);
+            if(branch.compareTo(branch_name) == 0) {
+                System.out.println("Cannot remove the current branch.");
+            }
+            else {
+                branch_file.delete();
+            }
+        }
+    }
+
+    public static void makereset(String commit_id) {
+        File log_file = new File(LOG_DIR + "/" + commit_id);
+        if(!log_file.exists()) {
+            System.out.println("No commit with that id exists.");
+        }
+        else {
+            Commit commit = readObject(log_file, Commit.class);
+            String cur_branch = readContentsAsString(current_branch);
+            File branch_file = new File(BRANCH_DIR + "/" + cur_branch);
+            writeObject(branch_file, commit);
+            writeContents(current_branch, "");
+
+            make_branchcheckout(cur_branch);
+        }
+    }
+
+    public static void makemerge(String other_branch) {
+
     }
     /* TODO: fill in the rest of this class. */
 }
