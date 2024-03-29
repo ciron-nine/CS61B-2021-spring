@@ -13,11 +13,9 @@ public class Main {
             System.out.println("Please enter a command.");
             System.exit(0);
         }
-        // TODO: what if args is empty?
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
-                // TODO: handle the `init` command
                 if(args.length != 1) {
                     System.out.println("Incorrect operands.");
                     System.exit(0);
@@ -25,14 +23,12 @@ public class Main {
                 Repository.makeinit();
                 break;
             case "add":
-                // TODO: handle the `add [filename]` command
                 if(args.length != 2) {
                     System.out.println("Incorrect operands.");
                     System.exit(0);
                 }
                 Repository.makeadd(args[1]);
                 break;
-            // TODO: FILL THE REST IN
             case "commit":
                 if(args.length != 2) {
                     System.out.println("Incorrect operands.");

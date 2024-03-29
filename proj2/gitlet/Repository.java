@@ -7,17 +7,24 @@ import java.util.Map;
 
 import static gitlet.Utils.*;
 
-// TODO: any imports you need here
 
 /** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
+
+ *  functions like name to do;
  *  does at a high level.
  *
- *  @author TODO
+ *  @author cirno-nine
  */
 public class Repository {
     /**
-     * TODO: add instance variables here.
+     *  Some dirs: dir use
+     *  STAGED_DIR: use to store STAGED "added" FILE
+     *  REMOVAL_DIR: use to store STAGED "removed" FILE
+     *  LOG_DIR: use to store commit file
+     *  BLOP_DIR: use to store file
+     *  BRANCH_DIR: use to store branch message
+     *  Head_commit_pointer: like name, HEAD reference
+     *  NOW_BRANCH: like name, show now branch name
      *
      * List all instance variables of the Repository class here with a useful
      * comment above them describing what that variable represents and how that
@@ -63,7 +70,7 @@ public class Repository {
         Date first_date = new Date(0);
         String mes = "initial commit";
         String file_name = sha1(mes+first_date.toString());
-        Commit init = new Commit(mes,file_name,"",first_date,null);
+        Commit init = new Commit(mes,file_name,"",first_date,null, null);
         File init_commit = new File(LOG_DIR + "/" + file_name);
         writeObject(init_commit, init);
         writeObject(Head_commit_pointer,init);
@@ -129,7 +136,7 @@ public class Repository {
         }
         String commit_name = sha1(message + date);
         Commit parent_commit = readObject(Head_commit_pointer,Commit.class);
-        Commit new_commit = new Commit(message,commit_name, parent_commit.sha_name, date,parent_commit);
+        Commit new_commit = new Commit(message,commit_name, parent_commit.sha_name, date,parent_commit, null);
         for(int i = 0; i < dir_file.size(); i ++) {
             String file_name = dir_file.get(i);
             File file = new File(STAGED_DIR + "/" + file_name);
@@ -445,7 +452,157 @@ public class Repository {
     }
 
     public static void makemerge(String other_branch) {
+        File other_branch_file = new File(BRANCH_DIR + "/" + other_branch);
+        String cur_branch = readContentsAsString(current_branch);
+        List<String> stage = plainFilenamesIn(STAGED_DIR);
+        List<String> removal = plainFilenamesIn(REMOVAL_DIR);
+        if(!stage.isEmpty() || !removal.isEmpty()) {
+            System.out.println("You have uncommitted changes.");
+            return;
+        }
+        if(!other_branch_file.exists()) {
+            System.out.println("A branch with that name does not exist.");
+            return;
+        }
+        if(cur_branch.compareTo(other_branch) == 0) {
+            System.out.println("Cannot merge a branch with itself.");
+            return;
+        }
+        Commit split_commit = Commit.lca(cur_branch,other_branch);
 
+        File cur_file = new File(Repository.BRANCH_DIR + "/" +cur_branch);
+        File other_file = new File(Repository.BRANCH_DIR + "/" + other_branch);
+        Commit cur = readObject(cur_file, Commit.class);
+        Commit other = readObject(other_file, Commit.class);
+        if(split_commit == other) {
+            System.out.println("Given branch is an ancestor of the current branch.");
+            return;
+        }
+        if(split_commit == cur) {
+            make_branchcheckout(other_branch);
+            System.out.println("Current branch fast-forwarded.");
+        }
+
+        List<String> file_list = plainFilenamesIn(CWD);
+        for(int i = 0; i < file_list.size(); i ++) {
+            String now_file_name = file_list.get(i);
+            if(cur.map.get(now_file_name) == null && other.map.get(now_file_name) != null){
+                System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                return;
+            }
+        }
+
+        String message = "Merged " + other_branch + " into " + cur_branch + ".";
+        Date date = new Date();
+        Boolean is_conflict = false;
+        String sha_name = sha1(message + date);
+        Commit new_commit = new Commit(message, sha_name, cur.sha_name, date, cur, other);
+        for (Map.Entry<String, Blop> entry : split_commit.map.entrySet()) {
+            Blop split_blop = entry.getValue();
+            String key_name = entry.getKey();
+            Blop cur_blop = cur.map.get(key_name);
+            Blop other_blop = other.map.get(key_name);
+            if(cur_blop == null && other_blop != null && other_blop.data.compareTo(split_blop.data) == 0) {
+                continue;
+            }
+            if(cur_blop != null && cur_blop.data.compareTo(split_blop.data) == 0 && other_blop == null) {
+                new_commit.map.remove(key_name);
+                restrictedDelete(key_name);
+                continue;
+            }
+            if(cur_blop == null && other_blop != null) {
+                String replace_content = "contents of file in current branch\n";
+                replace_content += "=======\n";
+                replace_content += "contents of file in given branch\n";
+                replace_content += ">>>>>>>\n";
+                replace_content += other_blop.data;
+                Blop new_blop = new Blop(key_name, replace_content);
+                new_commit.map.put(key_name, new_blop);
+                File cwd_file = new File(CWD + "/" + key_name);
+                writeContents(cwd_file, replace_content);
+                is_conflict = true;
+                continue;
+            }
+            if(other_blop == null && cur_blop != null) {
+                String replace_content = "contents of file in current branch\n";
+                replace_content += "=======\n";
+                replace_content += cur_blop.data;
+                replace_content += "contents of file in given branch\n";
+                replace_content += ">>>>>>>\n";
+                Blop new_blop = new Blop(key_name, replace_content);
+                new_commit.map.put(key_name, new_blop);
+                File cwd_file = new File(CWD + "/" + key_name);
+                writeContents(cwd_file, replace_content);
+                is_conflict = true;
+                continue;
+            }
+            if(cur_blop == null && other_blop == null) {
+                continue;
+            }
+            if(split_blop.data.compareTo(cur_blop.data) == 0 && split_blop.data.compareTo(other_blop.data) != 0) {
+                new_commit.map.put(key_name, other_blop);
+                File cwd_file = new File(CWD + "/" + other_blop.name);
+                writeContents(cwd_file, other_blop.data);
+                continue;
+            }
+            if(split_blop.data.compareTo(cur_blop.data) != 0 && split_blop.data.compareTo(other_blop.data) == 0) {
+                continue;
+            }
+            if(split_blop.data.compareTo(cur_blop.data) != 0 && split_blop.data.compareTo(other_blop.data) != 0 && cur_blop.data.compareTo(other_blop.data) == 0) {
+                continue;
+            }
+            else {
+                String replace_content = "contents of file in current branch\n";
+                replace_content += "=======\n";
+                replace_content += cur_blop.data;
+                replace_content += "contents of file in given branch\n";
+                replace_content += ">>>>>>>\n";
+                replace_content += other_blop.data;
+                Blop new_blop = new Blop(key_name, replace_content);
+                new_commit.map.put(key_name, new_blop);
+                File cwd_file = new File(CWD + "/" + key_name);
+                writeContents(cwd_file, replace_content);
+                is_conflict = true;
+            }
+        }
+        for (Map.Entry<String, Blop> entry : other.map.entrySet()) {
+            String key_name = entry.getKey();
+            Blop split_blop = split_commit.map.get(key_name);
+            if(split_blop != null) {
+                continue;
+            }
+            else {
+                Blop cur_blop = cur.map.get(key_name);
+                Blop other_blop = entry.getValue();
+                if(cur_blop == null) {
+                    new_commit.map.put(key_name, other_blop);
+                    File cwd_file = new File(CWD + "/" + other_blop.name);
+                    writeContents(cwd_file, other_blop.data);
+                    continue;
+                }
+                if(cur_blop.data.compareTo(other_blop.data) != 0) {
+                    String replace_content = "contents of file in current branch\n";
+                    replace_content += "=======\n";
+                    replace_content += cur_blop.data;
+                    replace_content += "contents of file in given branch\n";
+                    replace_content += ">>>>>>>\n";
+                    replace_content += other_blop.data;
+                    Blop new_blop = new Blop(key_name, replace_content);
+                    new_commit.map.put(key_name, new_blop);
+                    File cwd_file = new File(CWD + "/" + key_name);
+                    writeContents(cwd_file, replace_content);
+                    is_conflict = true;
+                }
+            }
+        }
+        if(is_conflict) {
+            System.out.println("Encountered a merge conflict.");
+        }
+        File commit_file = new File(LOG_DIR + "/" + sha_name);
+        File branch_file = new File (BRANCH_DIR + "/" + cur_branch);
+        writeObject(commit_file,new_commit);
+        writeObject(Head_commit_pointer,new_commit);
+        writeObject(branch_file,new_commit);
     }
     /* TODO: fill in the rest of this class. */
 }
