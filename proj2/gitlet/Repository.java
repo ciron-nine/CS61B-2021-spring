@@ -200,7 +200,7 @@ public class Repository {
             Commit cur = readObject(commit_file, Commit.class);
             if(cur.message.compareTo(commit_message) == 0) {
                 is_have = true;
-                System.out.println("commit " + cur.sha_name);
+                System.out.println(cur.sha_name);
             }
         }
         if(!is_have) {
