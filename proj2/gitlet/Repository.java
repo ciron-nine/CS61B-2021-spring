@@ -392,7 +392,7 @@ public class Repository {
         for(int i = 0; i < file_list.size(); i ++) {
             String commit_name = file_list.get(i);
             String sub = commit_name.substring(0, commit.length());
-            if(sub.compareTo(sub) ==  0) {
+            if(sub.compareTo(commit) ==  0) {
                 File file = new File(LOG_DIR + "/" + commit_name);
                 cur_commit = readObject(file, Commit.class);
                 is_exist = true;
