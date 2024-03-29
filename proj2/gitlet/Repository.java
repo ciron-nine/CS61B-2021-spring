@@ -511,11 +511,10 @@ public class Repository {
                 continue;
             }
             if(cur_blop == null && other_blop != null) {
-                String replace_content = "contents of file in current branch\n";
+                String replace_content = "<<<<<<< HEAD\n";
                 replace_content += "=======\n";
-                replace_content += "contents of file in given branch\n";
+                replace_content += other_blop.data + "\n";
                 replace_content += ">>>>>>>\n";
-                replace_content += other_blop.data;
                 Blop new_blop = new Blop(key_name, replace_content);
                 new_commit.map.put(key_name, new_blop);
                 File cwd_file = new File(CWD + "/" + key_name);
@@ -524,10 +523,8 @@ public class Repository {
                 continue;
             }
             if(other_blop == null && cur_blop != null) {
-                String replace_content = "contents of file in current branch\n";
+                String replace_content = "<<<<<<< HEAD\n" + cur_blop.data + "\n";
                 replace_content += "=======\n";
-                replace_content += cur_blop.data;
-                replace_content += "contents of file in given branch\n";
                 replace_content += ">>>>>>>\n";
                 Blop new_blop = new Blop(key_name, replace_content);
                 new_commit.map.put(key_name, new_blop);
@@ -552,10 +549,9 @@ public class Repository {
                 continue;
             }
             else {
-                String replace_content = "contents of file in current branch\n";
+                String replace_content = "<<<<<<< HEAD\n" + cur_blop.data + "\n";
                 replace_content += "=======\n";
-                replace_content += cur_blop.data;
-                replace_content += "contents of file in given branch\n";
+                replace_content += other_blop.data + "\n";
                 replace_content += ">>>>>>>\n";
                 replace_content += other_blop.data;
                 Blop new_blop = new Blop(key_name, replace_content);
@@ -581,10 +577,9 @@ public class Repository {
                     continue;
                 }
                 if(cur_blop.data.compareTo(other_blop.data) != 0) {
-                    String replace_content = "contents of file in current branch\n";
+                    String replace_content = "<<<<<<< HEAD\n" + cur_blop.data + "\n";
                     replace_content += "=======\n";
-                    replace_content += cur_blop.data;
-                    replace_content += "contents of file in given branch\n";
+                    replace_content += other_blop.data + "\n";
                     replace_content += ">>>>>>>\n";
                     replace_content += other_blop.data;
                     Blop new_blop = new Blop(key_name, replace_content);
