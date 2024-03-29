@@ -104,7 +104,7 @@ public class Commit implements Serializable {
             other_count --;
             other = other.parent;
         }
-        while (other != cur) {
+        while (other.sha_name.compareTo(cur.sha_name) != 0) {
             other = other.parent;
             cur = cur.parent;
         }
