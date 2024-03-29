@@ -79,6 +79,9 @@ public class Repository {
         }
         File remove_file = new File(REMOVAL_DIR + "/" + file_name);
         if(remove_file.exists()) {
+            File cur_file = new File(CWD + "/" + file_name);
+            writeContents(cur_file,readContentsAsString(remove_file));
+            remove_file.delete();
             return;
         }
         File added_file = new File(CWD + "/" + file_name);
@@ -156,10 +159,13 @@ public class Repository {
                 System.out.println("No reason to remove the file.");
             }
             else {
-                if(work_remove_file.exists()) {
-                    File removal_file = new File(REMOVAL_DIR + "/" + file_name);
-                    writeContents(removal_file,readContentsAsString(work_remove_file));
-                    restrictedDelete(work_remove_file);
+                File removal_file = new File(REMOVAL_DIR + "/" + file_name);
+                if(!removal_file.exists()) {
+                    Blop blop = head_commit.map.get(file_name);
+                    writeContents(removal_file,blop.data);
+                    if(work_remove_file.exists()) {
+                        restrictedDelete(work_remove_file);
+                    }
                 }
             }
         }
