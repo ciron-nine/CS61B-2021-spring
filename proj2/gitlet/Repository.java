@@ -353,7 +353,9 @@ public class Repository {
                 for(int i = 0; i < file_name.size(); i ++) {
                     String now_file_name = file_name.get(i);
                     File cwd_file = new File(CWD + "/" +now_file_name);
-                    restrictedDelete(cwd_file);
+                    if(branch_commit.map.get(now_file_name) == null && now_commit.map.get(now_file_name) !=null) {
+                        restrictedDelete(cwd_file);
+                    }
                 }
                 file_name = plainFilenamesIn(STAGED_DIR);
                 for(int i = 0; i < file_name.size(); i ++) {
@@ -513,7 +515,7 @@ public class Repository {
             if(cur_blop == null && other_blop != null) {
                 String replace_content = "<<<<<<< HEAD\n";
                 replace_content += "=======\n";
-                replace_content += other_blop.data + "\n";
+                replace_content += other_blop.data;
                 replace_content += ">>>>>>>\n";
                 Blop new_blop = new Blop(key_name, replace_content);
                 new_commit.map.put(key_name, new_blop);
@@ -523,7 +525,7 @@ public class Repository {
                 continue;
             }
             if(other_blop == null && cur_blop != null) {
-                String replace_content = "<<<<<<< HEAD\n" + cur_blop.data + "\n";
+                String replace_content = "<<<<<<< HEAD\n" + cur_blop.data;
                 replace_content += "=======\n";
                 replace_content += ">>>>>>>\n";
                 Blop new_blop = new Blop(key_name, replace_content);
@@ -549,11 +551,10 @@ public class Repository {
                 continue;
             }
             else {
-                String replace_content = "<<<<<<< HEAD\n" + cur_blop.data + "\n";
+                String replace_content = "<<<<<<< HEAD\n" + cur_blop.data;
                 replace_content += "=======\n";
-                replace_content += other_blop.data + "\n";
-                replace_content += ">>>>>>>\n";
                 replace_content += other_blop.data;
+                replace_content += ">>>>>>>\n";
                 Blop new_blop = new Blop(key_name, replace_content);
                 new_commit.map.put(key_name, new_blop);
                 File cwd_file = new File(CWD + "/" + key_name);
@@ -577,11 +578,10 @@ public class Repository {
                     continue;
                 }
                 if(cur_blop.data.compareTo(other_blop.data) != 0) {
-                    String replace_content = "<<<<<<< HEAD\n" + cur_blop.data + "\n";
+                    String replace_content = "<<<<<<< HEAD\n" + cur_blop.data;
                     replace_content += "=======\n";
-                    replace_content += other_blop.data + "\n";
-                    replace_content += ">>>>>>>\n";
                     replace_content += other_blop.data;
+                    replace_content += ">>>>>>>\n";
                     Blop new_blop = new Blop(key_name, replace_content);
                     new_commit.map.put(key_name, new_blop);
                     File cwd_file = new File(CWD + "/" + key_name);
