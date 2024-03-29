@@ -40,6 +40,13 @@ public class Repository {
     public static File Head_commit_pointer = new File(GITLET_DIR + "/" + "head");
 
     public static File current_branch = new File(GITLET_DIR + "/" + "branch");
+
+    private static void check_gitlet() {
+        if (!GITLET_DIR.exists()) {
+            System.out.println("Not in an initialized Gitlet directory.");
+            System.exit(0);
+        }
+    }
     public static void makeinit() {
         if(GITLET_DIR.exists()) {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
@@ -65,6 +72,7 @@ public class Repository {
     }
 
     public static void makeadd(String file_name) {
+        check_gitlet();
         List<String> dir_file = plainFilenamesIn(CWD);
         boolean is_have = false;
         for(int i = 0; i < dir_file.size(); i ++) {
@@ -108,6 +116,7 @@ public class Repository {
     }
 
     public static void makecommit(String message) {
+        check_gitlet();
         if(message.compareTo("") == 0) {
             System.out.println("Please enter a commit message.");
         }
@@ -148,6 +157,8 @@ public class Repository {
     }
 
     public static void makerm(String file_name) {
+        check_gitlet();
+
         Commit head_commit = readObject(Head_commit_pointer, Commit.class);
         File stage_remove_file = new File(STAGED_DIR + "/" + file_name);
         File work_remove_file = new File(CWD + "/" + file_name);
@@ -172,6 +183,8 @@ public class Repository {
     }
 
     public static void makelog() {
+        check_gitlet();
+
         Commit cur_commit = readObject(Head_commit_pointer,Commit.class);
         cur_commit.print_log();
         cur_commit = cur_commit.parent;
@@ -182,6 +195,8 @@ public class Repository {
     }
 
     public static  void makeGlobalLog() {
+        check_gitlet();
+
         List<String> commits = plainFilenamesIn(LOG_DIR);
         for(int i = 0; i < commits.size(); i ++) {
             String commit_name = commits.get(i);
@@ -192,6 +207,8 @@ public class Repository {
     }
 
     public static  void makefind(String commit_message) {
+        check_gitlet();
+
         List<String> commits = plainFilenamesIn(LOG_DIR);
         boolean is_have = false;
         for(int i = 0; i < commits.size(); i ++) {
@@ -209,6 +226,8 @@ public class Repository {
     }
 
     public static void makestatus() {
+        check_gitlet();
+
         String cur_branch = readContentsAsString(current_branch);
         System.out.println("=== Branches ===");
         List<String> file_name = plainFilenamesIn(BRANCH_DIR);
@@ -288,6 +307,8 @@ public class Repository {
     }
 
     public static void make_headcheckout(String file_name) {
+        check_gitlet();
+
         Commit cur_commit = readObject(Head_commit_pointer,Commit.class);
         if(cur_commit.map.get(file_name) == null) {
             System.out.println("File does not exist in that commit.");
@@ -300,6 +321,8 @@ public class Repository {
     }
 
     public static void make_branchcheckout(String branch) {
+        check_gitlet();
+
         File branch_file = new File(BRANCH_DIR + "/" + branch);
         if(!branch_file.exists()) {
             System.out.println("No such branch exists.");
@@ -310,11 +333,12 @@ public class Repository {
                 System.out.println("No need to checkout the current branch.");
             }
             else {
+                Commit branch_commit = readObject(branch_file, Commit.class);
                 Commit now_commit = readObject(Head_commit_pointer, Commit.class);
                 List<String> file_name = plainFilenamesIn(CWD);
                 for(int i = 0; i < file_name.size(); i ++) {
                     String now_file_name = file_name.get(i);
-                    if(now_commit.map.get(now_file_name) == null){
+                    if(now_commit.map.get(now_file_name) == null && branch_commit.map.get(now_file_name) != null){
                         System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                         return;
                     }
@@ -338,7 +362,7 @@ public class Repository {
                     removal_file.delete();
                 }
 
-                Commit branch_commit = readObject(branch_file, Commit.class);
+
                 for (Map.Entry<String, Blop> entry : branch_commit.map.entrySet()) {
                     Blop now = entry.getValue();
                     String create_file_name = now.name;
@@ -352,6 +376,8 @@ public class Repository {
     }
 
     public static void make_commitcheckout(String commit, String file_name) {
+        check_gitlet();
+
         File commit_file = new File(LOG_DIR + "/" + commit);
         if(!commit_file.exists()) {
             System.out.println("No commit with that id exists.");
@@ -370,6 +396,8 @@ public class Repository {
     }
 
     public static void makebranch(String branch_name) {
+        check_gitlet();
+
         File branch_file = new File(BRANCH_DIR + "/" + branch_name);
         if(branch_file.exists()) {
             System.out.println("A branch with that name already exists.");
@@ -381,6 +409,8 @@ public class Repository {
     }
 
     public static void makermbranch(String branch_name) {
+        check_gitlet();
+
         File branch_file = new File(BRANCH_DIR + "/" + branch_name);
         if(!branch_file.exists()) {
             System.out.println("A branch with that name does not exist.");
@@ -397,6 +427,8 @@ public class Repository {
     }
 
     public static void makereset(String commit_id) {
+        check_gitlet();
+
         File log_file = new File(LOG_DIR + "/" + commit_id);
         if(!log_file.exists()) {
             System.out.println("No commit with that id exists.");
