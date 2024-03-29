@@ -198,6 +198,7 @@ public class Repository {
             String commit = commits.get(i);
             File commit_file = new File(LOG_DIR + "/" + commit);
             Commit cur = readObject(commit_file, Commit.class);
+            String short_message = cur.message.substring(0,commit_message.length() - 1);
             if(cur.message.compareTo(commit_message) == 0) {
                 is_have = true;
                 System.out.println(cur.sha_name);
@@ -339,14 +340,14 @@ public class Repository {
                 }
 
                 Commit branch_commit = readObject(branch_file, Commit.class);
-                for (Map.Entry<String, Blop> entry : now_commit.map.entrySet()) {
+                for (Map.Entry<String, Blop> entry : branch_commit.map.entrySet()) {
                     Blop now = entry.getValue();
                     String create_file_name = now.name;
                     File create_file = new File(CWD + "/" + create_file_name);
                     writeContents(create_file,now.data);
                 }
                 writeObject(Head_commit_pointer,branch_commit);
-                writeObject(current_branch,branch_commit);
+                writeContents(current_branch,branch);
             }
         }
     }
