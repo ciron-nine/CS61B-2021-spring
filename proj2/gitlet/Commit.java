@@ -70,7 +70,7 @@ public class Commit implements Serializable {
         System.out.println("===");
         System.out.println("commit " + sha_name);
         if(this.second_par != null) {
-            System.out.println("Merge: " + this.sha_name.substring(0, 6) + " " + this.sec_parent_sha_name.substring(0, 6));
+            System.out.println("Merge: " + this.sha_name.substring(0, 7) + " " + this.sec_parent_sha_name.substring(0, 6));
         }
         System.out.println("Date: " + ocean_time.format(timestamp));
         System.out.println(message);
