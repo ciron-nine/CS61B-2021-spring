@@ -198,7 +198,6 @@ public class Repository {
             String commit = commits.get(i);
             File commit_file = new File(LOG_DIR + "/" + commit);
             Commit cur = readObject(commit_file, Commit.class);
-            String short_message = cur.message.substring(0,commit_message.length() - 1);
             if(cur.message.compareTo(commit_message) == 0) {
                 is_have = true;
                 System.out.println(cur.sha_name);
