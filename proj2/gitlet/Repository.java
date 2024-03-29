@@ -492,6 +492,7 @@ public class Repository {
         if(split_commit.sha_name.compareTo(cur.sha_name) == 0) {
             make_branchcheckout(other_branch);
             System.out.println("Current branch fast-forwarded.");
+            return;
         }
 
         List<String> file_list = plainFilenamesIn(CWD);
