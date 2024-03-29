@@ -42,15 +42,18 @@ public class Commit implements Serializable {
     public String sha_name;
 
     public String parent_sha_name;
+
+    public String sec_parent_sha_name;
     public static final File STAGED_DIR = join(".gitlet","staged");
     public static final File Blop_Dir = join(".gitlet","blop");
     public Map<String,Blop> map;
     /* TODO: fill in the rest of this class. */
-    public Commit(String mes,String sha,String parent_sha,Date time, Commit par, Commit second) {
+    public Commit(String mes,String sha,String parent_sha,String sec_parent,Date time, Commit par, Commit second) {
         timestamp = time;
         message = mes;
         parent = par;
         parent_sha_name  = parent_sha;
+        sec_parent_sha_name = sec_parent;
         second_par = second;
         sha_name = sha;
         if(parent != null) {
@@ -66,6 +69,9 @@ public class Commit implements Serializable {
         ocean_time.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
         System.out.println("===");
         System.out.println("commit " + sha_name);
+        if(this.second_par != null) {
+            System.out.println("Merge: " + this.sha_name.substring(0, 6) + " " + this.sec_parent_sha_name.substring(0, 6));
+        }
         System.out.println("Date: " + ocean_time.format(timestamp));
         System.out.println(message);
         System.out.println();

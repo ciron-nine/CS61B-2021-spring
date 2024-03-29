@@ -70,7 +70,7 @@ public class Repository {
         Date first_date = new Date(0);
         String mes = "initial commit";
         String file_name = sha1(mes+first_date.toString());
-        Commit init = new Commit(mes,file_name,"",first_date,null, null);
+        Commit init = new Commit(mes,file_name,"","", first_date,null, null);
         File init_commit = new File(LOG_DIR + "/" + file_name);
         writeObject(init_commit, init);
         writeObject(Head_commit_pointer,init);
@@ -136,7 +136,7 @@ public class Repository {
         }
         String commit_name = sha1(message + date);
         Commit parent_commit = readObject(Head_commit_pointer,Commit.class);
-        Commit new_commit = new Commit(message,commit_name, parent_commit.sha_name, date,parent_commit, null);
+        Commit new_commit = new Commit(message,commit_name, parent_commit.sha_name, "", date,parent_commit, null);
         for(int i = 0; i < dir_file.size(); i ++) {
             String file_name = dir_file.get(i);
             File file = new File(STAGED_DIR + "/" + file_name);
@@ -386,20 +386,29 @@ public class Repository {
 
     public static void make_commitcheckout(String commit, String file_name) {
         check_gitlet();
-
-        File commit_file = new File(LOG_DIR + "/" + commit);
-        if(!commit_file.exists()) {
+        Commit cur_commit = null;
+        boolean is_exist = false;
+        List<String> file_list = plainFilenamesIn(LOG_DIR);
+        for(int i = 0; i < file_list.size(); i ++) {
+            String commit_name = file_list.get(i);
+            String sub = commit_name.substring(0, commit.length() - 1);
+            if(sub.compareTo(sub) ==  0) {
+                File file = new File(LOG_DIR + "/" + commit_name);
+                cur_commit = readObject(file, Commit.class);
+                is_exist = true;
+                break;
+            }
+        }
+        if(!is_exist) {
             System.out.println("No commit with that id exists.");
         }
         else {
-            Commit cur_commit = readObject(commit_file, Commit.class);
             if(cur_commit.map.get(file_name) == null) {
                 System.out.println("File does not exist in that commit.");
             }
             else {
-                Blop blop = cur_commit.map.get(file_name);
-                File file = new File(CWD + "/" + blop.name);
-                writeContents(file,blop.data);
+                File cwd_file = new File(CWD + "/" + file_name);
+                writeContents(cwd_file, cur_commit.map.get(file_name).data);
             }
         }
     }
@@ -476,11 +485,11 @@ public class Repository {
         File other_file = new File(Repository.BRANCH_DIR + "/" + other_branch);
         Commit cur = readObject(cur_file, Commit.class);
         Commit other = readObject(other_file, Commit.class);
-        if(split_commit == other) {
+        if(split_commit.sha_name.compareTo(other.sha_name) == 0) {
             System.out.println("Given branch is an ancestor of the current branch.");
             return;
         }
-        if(split_commit == cur) {
+        if(split_commit.sha_name.compareTo(cur.sha_name) == 0) {
             make_branchcheckout(other_branch);
             System.out.println("Current branch fast-forwarded.");
         }
@@ -498,7 +507,7 @@ public class Repository {
         Date date = new Date();
         Boolean is_conflict = false;
         String sha_name = sha1(message + date);
-        Commit new_commit = new Commit(message, sha_name, cur.sha_name, date, cur, other);
+        Commit new_commit = new Commit(message, sha_name, cur.sha_name, other.sha_name, date, cur, other);
         for (Map.Entry<String, Blop> entry : split_commit.map.entrySet()) {
             Blop split_blop = entry.getValue();
             String key_name = entry.getKey();
