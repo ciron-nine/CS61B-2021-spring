@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import static gitlet.Utils.*;
 
@@ -42,7 +43,7 @@ public class Repository {
 
     public static final File REMOVAL_DIR = join(GITLET_DIR, "removal");
     public static final File BLOP_DIR = join(GITLET_DIR,"blop");
-
+    public static final File REMOTE_DIR = join(GITLET_DIR, "remote");
     public static final File BRANCH_DIR = join(GITLET_DIR,"branches");
     public static File Head_commit_pointer = new File(GITLET_DIR + "/" + "head");
 
@@ -65,6 +66,7 @@ public class Repository {
         LOG_DIR.mkdir();
         REMOVAL_DIR.mkdir();
         BRANCH_DIR.mkdir();
+        REMOVAL_DIR.mkdir();
 
         File master_branch = new File(BRANCH_DIR + "/" + "master");
         Date first_date = new Date(0);
@@ -610,5 +612,96 @@ public class Repository {
         writeObject(Head_commit_pointer,new_commit);
         writeObject(branch_file,new_commit);
     }
-    /* TODO: fill in the rest of this class. */
+
+    public static void makeremoteadd(String remote_name, String remote_dir) {
+        File remote_file = new File(REMOTE_DIR + "/" + remote_name);
+        if(remote_file.exists()) {
+            System.out.println("A remote with that name already exists.");
+            return;
+        }
+        writeContents(remote_file, remote_dir);
+    }
+
+    public static void makeremoterm(String remote_name) {
+        File remote_file = new File(REMOTE_DIR + "/" + remote_name);
+        if(!remote_file.exists()) {
+            System.out.println("A remote with that name does not exist.");
+            return;
+        }
+        remote_file.delete();
+    }
+
+    public static void makepush(String remote_name, String remote_branch) {
+        File remote_file = new File(REMOTE_DIR + "/" + remote_name);
+        String cur_to_remote_dir = readContentsAsString(remote_file);
+        String remote_gitlet_dir = CWD + "/" +cur_to_remote_dir;
+        File remote_gitlet = new File(remote_gitlet_dir);
+        if(!remote_gitlet.exists()) {
+            System.out.println("Remote directory not found.");
+            return;
+        }
+        File remote_branch_file = new File(remote_gitlet + "/branches/" + remote_branch);
+        Commit remote_head = null;
+        File cur_commit = null;
+        if(remote_branch_file.exists()) {
+            remote_head = readObject(remote_branch_file, Commit.class);
+            cur_commit = new File(LOG_DIR + "/" + remote_head.sha_name);
+        }
+        if(remote_branch_file.exists() && !cur_commit.exists()) {
+            System.out.println("Please pull down remote changes before pushing.");
+            return;
+        }
+        Commit cur = readObject(Head_commit_pointer, Commit.class);
+        Commit now_head = readObject(Head_commit_pointer, Commit.class);
+        File remote_log_dir = join(remote_gitlet, "log");
+        File remote_branch_dir = join(remote_gitlet, "branches");
+        while(now_head != null) {
+            File now_commit_file = new File(remote_log_dir + "/" + now_head.sha_name);
+            if(now_commit_file.exists()) {
+                now_head = now_head.parent;
+            }
+            else {
+                writeObject(now_commit_file, now_head);
+                now_head = now_head.parent;
+            }
+        }
+        writeObject(remote_branch_file, cur);
+        File remote_head_pointer = new File(remote_gitlet + "/" + "head");
+        writeObject(remote_head_pointer, cur);
+        File remote_cur_branch = new File(remote_gitlet + "/" + "branch");
+        writeContents(remote_cur_branch, remote_branch);
+    }
+
+    public static void makefetch(String remote_name, String remote_branch) {
+        File remote_file = new File(REMOTE_DIR + "/" + remote_name);
+        String cur_to_remote_dir = readContentsAsString(remote_file);
+        String remote_gitlet_dir = CWD + "/" +cur_to_remote_dir;
+        File remote_gitlet = new File(remote_gitlet_dir);
+        if(!remote_gitlet.exists()) {
+            System.out.println("Remote directory not found.");
+            return;
+        }
+        File remote_branch_file = new File(remote_gitlet + "/branches/" + remote_branch);
+        if(!remote_branch_file.exists()) {
+            System.out.println("That remote does not have that branch.");
+            return;
+        }
+        Commit remote_commit = readObject(remote_branch_file, Commit.class);
+        File cur_branch_file = new File(BRANCH_DIR + "/" + remote_branch);
+        Commit cur = remote_commit;
+        while(cur != null) {
+            File log_file = new File(LOG_DIR + "/" + cur.sha_name);
+            writeObject(log_file, cur);
+            cur = cur.parent;
+        }
+        writeObject(cur_branch_file, remote_commit);
+        writeObject(Head_commit_pointer, remote_commit);
+        writeContents(current_branch, remote_branch);
+
+    }
+
+    public static void makepull(String remote_name, String branch_name) {
+        makefetch(remote_name, branch_name);
+        makemerge(branch_name);
+    }
 }
