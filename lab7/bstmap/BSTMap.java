@@ -1,10 +1,9 @@
 package bstmap;
 
 
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
-public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V>{
+public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V>, Iterable<K>{
 
 
     private Node root;             // root of BST
@@ -116,7 +115,25 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V>{
     }
 
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> key = new TreeSet<>();
+        if(root == null) {
+            return key;
+        }
+        else {
+            Queue<Node> que = new LinkedList<>();
+            que.add(root);
+            while(!que.isEmpty()) {
+                Node cur = que.poll();
+                key.add(cur.key);
+                if(cur.left != null) {
+                    que.add(cur.left);
+                }
+                if(cur.right != null) {
+                    que.add(cur.right);
+                }
+            }
+        }
+        return key;
     }
 
     private void check_left_or_right(Node prev, Node cur) {
@@ -125,6 +142,30 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V>{
         }
         else {
             prev.right = null;
+        }
+    }
+    private class BSTItreator<K> implements Iterator<K> {
+
+        private Queue<Node> que;
+        public BSTItreator(Node root) {
+            que = new LinkedList<>();
+            que.add(root);
+        }
+        @Override
+        public boolean hasNext() {
+            return !que.isEmpty();
+        }
+
+        @Override
+        public K next() {
+            Node cur = que.poll();
+            if(cur.left != null) {
+                que.add(cur.left);
+            }
+            if(cur.right != null) {
+                que.add(cur.right);
+            }
+            return (K) cur.key;
         }
     }
     public V remove(K key) {
@@ -315,6 +356,6 @@ public class BSTMap<K extends Comparable<K>, V>  implements Map61B<K, V>{
     }
 
     public Iterator<K> iterator() {
-        throw new UnsupportedOperationException();
+        return new BSTItreator<>(root);
     }
 }
