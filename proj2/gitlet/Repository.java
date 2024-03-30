@@ -564,6 +564,9 @@ public class Repository {
             if(split_blop.data.compareTo(cur_blop.data) != 0 && split_blop.data.compareTo(other_blop.data) != 0 && cur_blop.data.compareTo(other_blop.data) == 0) {
                 continue;
             }
+            if(split_blop.data.compareTo(cur_blop.data) == 0 && split_blop.data.compareTo(other_blop.data) == 0) {
+                continue;
+            }
             else {
                 String replace_content = "<<<<<<< HEAD\n" + cur_blop.data;
                 replace_content += "=======\n";
