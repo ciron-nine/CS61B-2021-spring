@@ -696,8 +696,13 @@ public class Repository {
         Commit cur = remote_commit;
         while(cur != null) {
             File log_file = new File(LOG_DIR + "/" + cur.sha_name);
-            writeObject(log_file, cur);
-            cur = cur.parent;
+            if(log_file.exists()) {
+                cur = cur.parent;
+            }
+            else {
+                writeObject(log_file, cur);
+                cur = cur.parent;
+            }
         }
         writeObject(cur_branch_file, remote_commit);
 
