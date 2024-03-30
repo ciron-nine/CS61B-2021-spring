@@ -688,7 +688,11 @@ public class Repository {
             return;
         }
         Commit remote_commit = readObject(remote_branch_file, Commit.class);
-        File cur_branch_file = new File(BRANCH_DIR + "/" + remote_branch);
+        File remote_branch_ = new File(BRANCH_DIR + "/" + remote_name);
+        if(!remote_branch_.exists()) {
+            remote_branch_.mkdir();
+        }
+        File cur_branch_file = new File(remote_branch_ + "/" + remote_branch);
         Commit cur = remote_commit;
         while(cur != null) {
             File log_file = new File(LOG_DIR + "/" + cur.sha_name);
@@ -697,12 +701,17 @@ public class Repository {
         }
         writeObject(cur_branch_file, remote_commit);
         writeObject(Head_commit_pointer, remote_commit);
-        writeContents(current_branch, remote_branch);
+        writeContents(current_branch, remote_name + "/" + remote_branch);
 
     }
 
     public static void makepull(String remote_name, String branch_name) {
+        String cur_branch = readContentsAsString(current_branch);
+        File cur_branch_file = new File(BRANCH_DIR + "/" + cur_branch);
+        Commit cur = readObject(cur_branch_file, Commit.class);
         makefetch(remote_name, branch_name);
+        writeObject(Head_commit_pointer, cur);
+        writeContents(current_branch, cur_branch);
         makemerge(branch_name);
     }
 }

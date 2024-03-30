@@ -138,6 +138,7 @@ public class Main {
                     System.out.println("Incorrect operands.");
                     System.exit(0);
                 }
+                Repository.makeremoterm(args[1]);
                 break;
             case "push":
                 if(args.length != 3) {
