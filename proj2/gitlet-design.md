@@ -32,8 +32,37 @@
 
 ### Repository
 
+#### Variable
+
+1. DIRS: as we can see,staged_dir store add staged files
+2. REMOVAL_DIR: store staged remove files.
+3. LOG_DIR: store commit files
+4. BLOP_DIR: store file use class Blop(But commit map contains blop) (not used)
+5. REMOTE_DIR: store remote name and where dir
+6. BRANCH_DIR: store branch information store as Commit class
+7. not dirs:
+8. like head_pointer: store now commit
+9. like current_branch: store now branch name
+
+#### methods
+
+1. a lot of command methods like: add, commit, push
 
 ## Algorithms
 
+1. LCA(?): maybe, recursive method, used in merge method.
+
 ## Persistence
+
+```angular2html
+CWD                             <==== Whatever the current working directory is.
+└── .gitlet                     <==== All persistant data is stored within here
+    ├── stage                   <==== All added staged files  stored in this directory
+    ├── removal                 <==== All removal staged files are stored in this directory
+    ├── log                     <==== All commit files are stored in this directory
+    ├── branch                  <==== All branch files are stored in this directory
+    ├── remote                  <==== All remote files are stored in this directory
+    ├── Head_pointer            <==== Head commit pointer (is a file)
+    └── current_branch          <==== now branch name (is a file)
+```
 
