@@ -82,6 +82,23 @@ public class Commit implements Serializable {
         File other_file = new File(Repository.BRANCH_DIR + "/" + other_branch);
         Commit cur = readObject(cur_file, Commit.class);
         Commit other = readObject(other_file, Commit.class);
+
+    }
+    private Commit lca_commit(Commit cur1, Commit other1) {
+        Commit split1 = null;
+        if(cur1.second_par != null) {
+            split1 = lca_commit(cur1.second_par, other1);
+        }
+        Commit split2 = null;
+        if(other1.second_par != null) {
+            split2 = lca_commit(cur1, other1.second_par);
+        }
+        Commit split3 = null;
+        if(other1.second_par != null && cur1.second_par != null) {
+            split3 = lca_commit(cur1.second_par, other1.second_par);
+        }
+        Commit cur = cur1;
+        Commit other = other1;
         while (cur != null && other != null) {
             cur = cur.parent;
             other = other.parent;
@@ -100,8 +117,8 @@ public class Commit implements Serializable {
                 other = other.parent;
             }
         }
-        cur = readObject(cur_file, Commit.class);
-        other = readObject(other_file, Commit.class);
+        cur = cur1;
+        other = other1;
         while (cur_count != 0) {
             cur_count --;
             cur = cur.parent;
@@ -114,6 +131,25 @@ public class Commit implements Serializable {
             other = other.parent;
             cur = cur.parent;
         }
-        return other;
+        if(split1 !=  null) {
+            Commit test = lca_commit(cur, split1);
+            if(test == cur) {
+                cur = split1;
+            }
+        }
+        if(split2 != null) {
+            Commit test = lca_commit(cur, split2);
+            if(test == cur) {
+                cur = split2;
+            }
+        }
+        if(split3 != null) {
+            Commit test = lca_commit(cur, split3);
+            if(test == cur) {
+                cur = split3;
+            }
+        }
+
+        return cur;
     }
 }

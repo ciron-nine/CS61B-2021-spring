@@ -481,6 +481,7 @@ public class Repository {
         }
         Commit split_commit = Commit.lca(cur_branch,other_branch);
 
+
         File cur_file = new File(Repository.BRANCH_DIR + "/" +cur_branch);
         File other_file = new File(Repository.BRANCH_DIR + "/" + other_branch);
         Commit cur = readObject(cur_file, Commit.class);
