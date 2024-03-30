@@ -700,18 +700,12 @@ public class Repository {
             cur = cur.parent;
         }
         writeObject(cur_branch_file, remote_commit);
-        writeObject(Head_commit_pointer, remote_commit);
-        writeContents(current_branch, remote_name + "/" + remote_branch);
 
     }
 
     public static void makepull(String remote_name, String branch_name) {
         String cur_branch = readContentsAsString(current_branch);
-        File cur_branch_file = new File(BRANCH_DIR + "/" + cur_branch);
-        Commit cur = readObject(cur_branch_file, Commit.class);
         makefetch(remote_name, branch_name);
-        writeObject(Head_commit_pointer, cur);
-        writeContents(current_branch, cur_branch);
-        makemerge(branch_name);
+        makemerge(cur_branch);
     }
 }
