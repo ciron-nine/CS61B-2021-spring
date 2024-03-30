@@ -1,0 +1,15 @@
+Order:
+Enter # strings to insert into the maps: vsdvsvs
+Please enter a positive integer: 30000
+class bstmap.ULLMap: 4.01 sec
+class bstmap.BSTMap: 0.87 sec
+Java's Built-in TreeMap: 0.01 sec
+Java's Built-in HashMap: 0.00 sec
+
+InOrder:
+Enter # strings to insert into the maps: dadafveafva
+Please enter a positive integer: 30000
+class bstmap.ULLMap: 3.56 sec
+class bstmap.BSTMap: 1.06 sec
+Java's Built-in TreeMap: 0.01 sec
+Java's Built-in HashMap: 0.01 sec
