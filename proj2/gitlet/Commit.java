@@ -83,8 +83,9 @@ public class Commit implements Serializable {
         Commit cur = readObject(cur_file, Commit.class);
         Commit other = readObject(other_file, Commit.class);
 
+        return lca_commit(cur, other);
     }
-    private Commit lca_commit(Commit cur1, Commit other1) {
+    private static Commit lca_commit(Commit cur1, Commit other1) {
         Commit split1 = null;
         if(cur1.second_par != null) {
             split1 = lca_commit(cur1.second_par, other1);
