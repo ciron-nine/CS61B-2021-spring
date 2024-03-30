@@ -704,8 +704,7 @@ public class Repository {
     }
 
     public static void makepull(String remote_name, String branch_name) {
-        String cur_branch = readContentsAsString(current_branch);
         makefetch(remote_name, branch_name);
-        makemerge(cur_branch);
+        makemerge(remote_name + "/" +branch_name);
     }
 }
