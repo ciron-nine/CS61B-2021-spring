@@ -67,6 +67,7 @@ public class Repository {
         REMOVAL_DIR.mkdir();
         BRANCH_DIR.mkdir();
         REMOVAL_DIR.mkdir();
+        REMOTE_DIR.mkdir();
 
         File master_branch = new File(BRANCH_DIR + "/" + "master");
         Date first_date = new Date(0);
