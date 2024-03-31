@@ -1,0 +1,17 @@
+Insert order
+Enter # strings to insert into each map: fjioajfoaij
+Please enter a positive integer: 100000
+class hashmap.MyHashMapALBuckets: 1.00 sec
+class hashmap.MyHashMapLLBuckets: 0.92 sec
+class hashmap.MyHashMapTSBuckets: 0.93 sec
+class hashmap.MyHashMapHSBuckets: 0.96 sec
+class hashmap.MyHashMapPQBuckets: 0.91 sec
+
+Insert random
+Enter # strings to insert into each map: djaolijfioa
+Please enter a positive integer: 200000
+class hashmap.MyHashMapALBuckets: 0.55 sec
+class hashmap.MyHashMapLLBuckets: 0.50 sec
+class hashmap.MyHashMapTSBuckets: 0.54 sec
+class hashmap.MyHashMapHSBuckets: 0.56 sec
+class hashmap.MyHashMapPQBuckets: 0.56 sec
