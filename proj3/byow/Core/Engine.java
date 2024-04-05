@@ -110,7 +110,7 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        ter.initialize(WIDTH, HEIGHT);
+
         boolean is_new = false;
         long seed = 0;
         for(int i = 0; i < input.length(); i ++) {
@@ -131,7 +131,7 @@ public class Engine {
         }
         Random SEED = new Random(seed);
         new_world(SEED, finalWorldFrame);
-        ter.renderFrame(finalWorldFrame);
+        
         return finalWorldFrame;
     }
 }
